@@ -11,6 +11,7 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
@@ -24,9 +25,10 @@ public class UserInfoMapperTests {
     private UserInfoMapper userInfoMapper;
 
     @Test
+    @Rollback(false)
     public void testInsert(){
-        String userName = "Robin";
-        String salt = "abcd";
+        String userName = "admin";
+        String salt = "adcb";
         UserInfo userInfo = new UserInfo();
          //加密
         SimpleHash simpleHash = new SimpleHash(Md5Hash.ALGORITHM_NAME,"123456",salt,3);
@@ -44,5 +46,21 @@ public class UserInfoMapperTests {
     public void testFindFirstByUserName(){
         UserInfo userInfo = userInfoMapper.findFirstByUserName("");
         Assert.assertNull(userInfo);
+
+        String userName = "admin";
+        String salt = "adcb";
+        UserInfo userInfo1 = new UserInfo();
+        //加密
+        SimpleHash simpleHash = new SimpleHash(Md5Hash.ALGORITHM_NAME,"123456",salt,3);
+        userInfo1.setUserId(1);
+        userInfo1.setUserName(userName);
+        userInfo1.setSalt(salt);
+        userInfo1.setPassword(simpleHash.toString());
+        userInfo1.setUserState(Byte.parseByte("1"));
+
+        userInfo = userInfoMapper.findFirstByUserName("admin");
+        Assert.assertNotNull(userInfo);
+        //Assert.assertEquals(userInfo,userInfo1);
+
     }
 }
