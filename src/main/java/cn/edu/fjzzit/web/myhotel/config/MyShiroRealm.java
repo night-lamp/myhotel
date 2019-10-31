@@ -4,8 +4,9 @@ import cn.edu.fjzzit.web.myhotel.model.UserInfo;
 import cn.edu.fjzzit.web.myhotel.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
-        import org.apache.shiro.realm.AuthorizingRealm;
-        import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +18,10 @@ public class MyShiroRealm extends AuthorizingRealm {
     //授权（权限认证）
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
+        UserInfo userInfo = (UserInfo) principals.getPrimaryPrincipal();
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        authorizationInfo.setRoles(userService.getUserRoles(userInfo.getUserId()));
+        return authorizationInfo;
     }
 
     //认证（身份认证）

@@ -2,6 +2,8 @@ package cn.edu.fjzzit.web.myhotel.service;
 
 import cn.edu.fjzzit.web.myhotel.model.UserInfo;
 
+import java.util.Set;
+
 
 public interface UserService {
     //根据用户名返回信息。
@@ -11,6 +13,8 @@ public interface UserService {
     UserInfo getUserInfo(String userName);
 
     //获取用户角色
-    //Set<String> getUserRoles(Integer userID);
+    //@param userName
+    //@return 返回用户拥有的所有角色集合。
+    Set<String> getUserRoles(Integer userID);
 
 }

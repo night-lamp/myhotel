@@ -9,6 +9,8 @@ import java.util.List;
 @Mapper
 public interface UserRoleMapper {
     int insert(UserRole record);
+
+    List<String> findUserRolesByUserID(Integer userID);
     //通过用户ID查询用户角色
 
 }
