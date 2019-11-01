@@ -1,10 +1,9 @@
-﻿package cn.edu.fjzzit.web.myhotel.config;
+package cn.edu.fjzzit.web.myhotel.config;
 
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -26,10 +25,10 @@ public class ShiroConfig {
     public ShiroFilterFactoryBean shiroFilter(@Autowired SecurityManager securityManager){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
+        LinkedHashMap<String, String> filterMap = new LinkedHashMap<>();
         shiroFilterFactoryBean.setLoginUrl("/user/need_login");
         shiroFilterFactoryBean.setSuccessUrl("/");
         shiroFilterFactoryBean.setUnauthorizedUrl("/user/unauth");
-        LinkedHashMap<String, String> filterMap = new LinkedHashMap<>();
         // 权限比较低的放前面, 权限较高的放后面
         filterMap.put("/user/need_login", "anon");
         filterMap.put("/user/unauth", "anon");
@@ -44,7 +43,7 @@ public class ShiroConfig {
         return shiroFilterFactoryBean;
     }
     @Bean
-    public SecurityManager securityManager(@Autowired MyShiroRealm myShiroRealm, SessionManager sessionManager){
+    public SecurityManager securityManager(@Autowired MyShiroRealm myShiroRealm,@Autowired SessionManager sessionManager){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setSessionManager(sessionManager);
         securityManager.setRealm(myShiroRealm);
@@ -63,6 +62,13 @@ public class ShiroConfig {
         hashedCredentialsMatcher.setHashAlgorithmName(Md5Hash.ALGORITHM_NAME);
         hashedCredentialsMatcher.setHashIterations(3);
         return hashedCredentialsMatcher;
+    }
+
+    @Bean
+    public SessionManager sessionManager(){
+        MysessionManager sessionManager = new MysessionManager();
+        sessionManager.setGlobalSessionTimeout(300000);
+        return sessionManager;
     }
 
     /**

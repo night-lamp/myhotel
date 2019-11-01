@@ -1,6 +1,7 @@
 package cn.edu.fjzzit.web.myhotel.mapper;
 
 import cn.edu.fjzzit.web.myhotel.model.UserInfo;
+import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.junit.Assert;
@@ -15,6 +16,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.Random;
+import java.util.UUID;
 
 //让测试运行于Spring测试环境
 @RunWith(SpringRunner.class)
@@ -25,10 +28,11 @@ public class UserInfoMapperTests {
     private UserInfoMapper userInfoMapper;
 
     @Test
-    @Rollback(false)
+    @Rollback(value = false)
     public void testInsert(){
         String userName = "admin";
-        String salt = "adcb";
+        //使用UUID进行密码的加密。
+        String salt = UUID.randomUUID().toString().replace("-","");
         UserInfo userInfo = new UserInfo();
          //加密
         SimpleHash simpleHash = new SimpleHash(Md5Hash.ALGORITHM_NAME,"123456",salt,3);
@@ -47,7 +51,7 @@ public class UserInfoMapperTests {
         UserInfo userInfo = userInfoMapper.findFirstByUserName("");
         Assert.assertNull(userInfo);
 
-        String userName = "admin";
+        String userName = "admin_1";
         String salt = "adcb";
         UserInfo userInfo1 = new UserInfo();
         //加密
